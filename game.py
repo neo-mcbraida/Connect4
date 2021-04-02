@@ -32,7 +32,6 @@ class Grid:
                 else:
                     self.CheckDiagonal(row, column, inrow, left)
 
-
     def CheckVertical(self, row, column, inrow):
         row -= 1
         if row != -1:
@@ -42,7 +41,6 @@ class Grid:
                     self.won = True
                 else:
                     self.CheckVertical(row, column, inrow)
-
 
     def CheckHorizontal(self, row, column, inrow):
         column += 1
@@ -54,7 +52,6 @@ class Grid:
                 else:
                     self.CheckHorizontal(row, column, inrow)
 
-
     def PieceWinCheck(self):
         for i in range(7):
             for u in range (6):
@@ -63,7 +60,6 @@ class Grid:
                     self.CheckDiagonal(u, i, 1, 1)
                     self.CheckHorizontal(u, i, 1)
                     self.CheckVertical(u, i, 1)
-
 
     def SwapTurn(self):
         if self.num == 1:
@@ -92,5 +88,16 @@ class Grid:
             self.SwapTurn()
             self.Turn()
             
+    def GetState(self):
+        temp = self.grid.copy()
+        for row in temp:
+            for spot in row:
+                if spot == 0:
+                    spot = 0.1
+                if spot == 2:
+                    spot = -1
+        temp = temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6]
+        return temp
+
 game = Grid()
 game.Turn()
