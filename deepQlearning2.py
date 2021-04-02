@@ -60,7 +60,6 @@ update_target_network = 10000
 # Using huber loss for stability
 loss_function = keras.losses.Huber()
 
-
 while True:
     #game.run.Reset()
     state = game.episode.grid
