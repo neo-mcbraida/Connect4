@@ -127,6 +127,7 @@ class Grid:
             reward = 20
         elif self.winner == 2:
             reward = -20
+        #print(reward)
         return reward
 
     def CheckValid(self, action):
@@ -138,7 +139,7 @@ class Grid:
             
     def ChooseRand(self):
         for i in range(7):
-            if self.grid[i][0]:
+            if self.grid[i][0] == 0:
                 return i
 
     def Step(self, action):
@@ -151,6 +152,7 @@ class Grid:
             state = self.GetState(1)
             reward += self.GetReward()
             done = self.won
+            #self.Display()
             return state, reward, done
         else:
             self.SwapTurn()
@@ -158,6 +160,7 @@ class Grid:
             state = self.GetState(1)
             reward += self.GetReward()
             done = self.won
+            #self.Display()
             return state, reward, done
 
     def TrainingAI(self, state):

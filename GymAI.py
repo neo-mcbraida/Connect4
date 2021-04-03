@@ -4,6 +4,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+from keras import losses 
+from keras import optimizers 
 
 class AIOp:
     def __init__(self):
@@ -16,7 +18,7 @@ class AIOp:
 
         self.SinceUpdate += 1
 
-        if self.SinceUpdate == 10_000:
+        if self.SinceUpdate == 2_000:
             self.UpdateModel()
             self.SinceUpdate = 0
 

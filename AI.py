@@ -41,10 +41,10 @@ num_actions = 6
 def create_q_model():
     inputs = layers.Input(shape=(42))
     #add masking
-    layer1 = layers.Dense(64, activation="relu")(inputs)#Hopefully to estimate penalty of each deck
-    layer2 = layers.Dense(64, activation="relu")(layer1)#Hopefully to estimate which will be picked up 
-    layer3 = layers.Dense(32, activation="relu")(layer2)#Hopefully to estimate which card is closest to best deck
-    layer4 = layers.Dense(16, activation="relu")(layer3)#Hopefully to estimate best card
+    layer1 = layers.Dense(128, activation="relu")(inputs)#Hopefully to estimate penalty of each deck
+    layer2 = layers.Dense(128, activation="relu")(layer1)#Hopefully to estimate which will be picked up 
+    layer3 = layers.Dense(96, activation="relu")(layer2)#Hopefully to estimate which card is closest to best deck
+    layer4 = layers.Dense(69, activation="relu")(layer3)#Hopefully to estimate best card
 
     action = layers.Dense(num_actions, activation="linear")(layer4)
 
@@ -122,10 +122,11 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, save_
 model = tf.keras.models.load_model("Model.h5")   # model.load_weights(checkpoint_path)
 model_target = tf.keras.models.load_model("Model_Target.h5")#model_target.load_weights(checkpoint_target_path)
 
+
+#model.compile(loss = 'mean_squared_error', optimizer='adam')
 #model.save("Model.h5")
 #model_target.save("Model_Target.h5")
 model.summary()
-
 
 
 while True:  # Run until solved
@@ -133,7 +134,7 @@ while True:  # Run until solved
     state = gm.env.GetState(1)
     episode_reward = 0
     print(episode_count)
-    for timestep in range(1, 42):#max steps per game is 10 CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    for timestep in range(0, 21):#max steps per game is 10 CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # env.render(); Adding this line would show the attempts
         # of the agent in a pop up window.
         frame_count += 1
@@ -248,10 +249,13 @@ while True:  # Run until solved
     eps_since_save += 1
 
     if eps_since_save == 500:
+        model.compile(loss = 'mean_squared_error', optimizer='adam')
         model.save("Model.h5")
+        model_target.compile(loss = 'mean_squared_error', optimizer='adam')
         model_target.save("Model_Target.h5")
         eps_since_save = 0
         print("saved")
+        print(running_reward)
         
 
     #if running_reward > 40:  # Condition to consider the task solved
