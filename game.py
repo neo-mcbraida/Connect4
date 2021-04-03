@@ -86,7 +86,12 @@ class Grid:
         print(grid[0][5], grid[1][5], grid[2][5], grid[3][5], grid[4][5], grid[5][5], grid[6][5])
 
     def Turn(self):
-        column = (int(input("enter a column"))) - 1
+        if self.num == 1:
+            column = (int(input("enter a column"))) - 1
+        else:
+            state = self.GetState(2)
+            column = GA.AI.GetAction(state)
+            print(column)
         self.Drop(column)
         self.Display()
         self.PieceWinCheck()
@@ -136,7 +141,6 @@ class Grid:
             if self.grid[i][0]:
                 return i
 
-
     def Step(self, action):
         #column = action# - 1
         reward, column = self.CheckValid(action)
@@ -172,13 +176,6 @@ class Grid:
         #self.Display()
         self.PieceWinCheck()
         self.SwapTurn()
-        
-
-
-
-        
-
-
 
 env = Grid()
 #game.Turn()

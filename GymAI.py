@@ -11,13 +11,8 @@ class AIOp:
         self.model = tf.keras.models.load_model("Model.h5")
 
     def GetColumn(self, state):
-        state_tensor = tf.convert_to_tensor(state)
-        state_tensor = tf.expand_dims(state_tensor, 0)
-        action_probs = self.model(state_tensor, training=False)
-        #print("predicted!")
-        # Take best action
-        action = tf.argmax(action_probs[0]).numpy()
-        action = np.argmax(action)
+        
+        action = self.GetAction(state)
 
         self.SinceUpdate += 1
 
@@ -25,6 +20,16 @@ class AIOp:
             self.UpdateModel()
             self.SinceUpdate = 0
 
+        return action
+
+    def GetAction(self, state):
+        state_tensor = tf.convert_to_tensor(state)
+        state_tensor = tf.expand_dims(state_tensor, 0)
+        action_probs = self.model(state_tensor, training=False)
+        #print("predicted!")
+        # Take best action
+        action = tf.argmax(action_probs[0]).numpy()
+        action = np.argmax(action)
         return action
          
     def UpdateModel(self):
