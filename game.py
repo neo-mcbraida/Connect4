@@ -1,6 +1,10 @@
-class Grid:
+import GymAI as GA
 
+class Grid:
     def __init__(self):
+        self.Reset()
+
+    def Reset(self):
         self.num = 1
         self.grid = [[0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0],
@@ -10,6 +14,8 @@ class Grid:
                     [0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0]]
         self.won = False
+        self.winner = 0
+        self.AIOpMove = 0
 
     def Drop(self, column): 
         i = 0
@@ -29,6 +35,7 @@ class Grid:
                 inrow += 1
                 if inrow == 4:
                     self.won = True
+                    self.winner = self.num
                 else:
                     self.CheckDiagonal(row, column, inrow, left)
 
@@ -39,6 +46,7 @@ class Grid:
                 inrow += 1
                 if inrow == 4:
                     self.won = True
+                    self.winner = self.num
                 else:
                     self.CheckVertical(row, column, inrow)
 
@@ -49,6 +57,7 @@ class Grid:
                 inrow += 1
                 if inrow == 4:
                     self.won = True
+                    self.winner = self.num
                 else:
                     self.CheckHorizontal(row, column, inrow)
 
@@ -88,7 +97,7 @@ class Grid:
             self.SwapTurn()
             self.Turn()
             
-    def GetState(self):
+    def GetState(self, player):
         temp = self.grid.copy()
         for row in temp:
             for spot in row:
@@ -96,8 +105,80 @@ class Grid:
                     spot = 0.1
                 if spot == 2:
                     spot = -1
-        temp = temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6]
+        if player == 2:
+            for row in temp:
+                for spot in row:
+                    if spot == 1:
+                        spot = 2
+                    elif spot == 2:
+                        spot = 1
+        temp = temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6]#1D array of board
+        #temp.append(self.num)#whether it is player 1 turn or player 2 turn
         return temp
 
-game = Grid()
-game.Turn()
+    def GetReward(self):
+        reward = 0
+        if self.winner == 1:
+            reward = 20
+        elif self.winner == 2:
+            reward = -20
+        return reward
+
+    def CheckValid(self, action):
+        reward = 0
+        if self.grid[action][0] != 0:
+            reward = -10
+            action = self.ChooseRand()
+        return reward, action
+            
+    def ChooseRand(self):
+        for i in range(7):
+            if self.grid[i][0]:
+                return i
+
+
+    def Step(self, action):
+        #column = action# - 1
+        reward, column = self.CheckValid(action)
+        self.Drop(column)
+        #self.Display()
+        self.PieceWinCheck()
+        if self.won == True:
+            state = self.GetState(1)
+            reward += self.GetReward()
+            done = self.won
+            return state, reward, done
+        else:
+            self.SwapTurn()
+            self.AIMove()
+            state = self.GetState(1)
+            reward += self.GetReward()
+            done = self.won
+            return state, reward, done
+
+    def TrainingAI(self, state):
+        index = GA.AI.GetColumn(state)# - 1
+        if self.grid[index][0] != 0:
+            #self.TrainingAI(state)
+            self.AIOpMove = self.ChooseRand()
+        else:
+            self.AIOpMove = index
+
+    def AIMove(self):
+        state = self.GetState(2)
+        self.TrainingAI(state)
+        column = self.AIOpMove
+        self.Drop(column)
+        #self.Display()
+        self.PieceWinCheck()
+        self.SwapTurn()
+        
+
+
+
+        
+
+
+
+env = Grid()
+#game.Turn()
